@@ -1,9 +1,13 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.pages.HomePage;
 import com.udacity.jwdnd.course1.cloudstorage.pages.LoginPage;
+import com.udacity.jwdnd.course1.cloudstorage.pages.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -17,6 +21,8 @@ class CloudStorageApplicationTests {
 	private WebDriver driver;
 
 	private LoginPage loginPage;
+	private SignupPage signupPage;
+	private HomePage homePage;
 
 	@BeforeAll
 	static void beforeAll() {
@@ -26,6 +32,9 @@ class CloudStorageApplicationTests {
 	@BeforeEach
 	public void beforeEach() {
 		this.driver = new ChromeDriver();
+		signupPage = new SignupPage(driver);
+        loginPage = new LoginPage(driver);
+        homePage = new HomePage(driver);
 	}
 
 	@AfterEach
@@ -48,16 +57,85 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void userCanRegister() {
-		driver.get("http://localhost:" + this.port + "/login");
-		loginPage.loginUser();
-
-//		Assertions.assertEquals("Home", driver.getTitle());
-	}
-
-	@Test
 	public void unauthorizedUsersCannotAccessHomePage() {
 		driver.get("http://localhost:" + this.port + "/");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
+
+	@Test
+	public void userCanRegisterAndLogin() throws InterruptedException{
+		driver.get("http://localhost:" + this.port + "/signup");
+		signupPage.registerUser("maged", "ahmed", "maged", "secret");
+		Thread.sleep(1000);
+		loginPage.loginUser("maged", "secret");
+		Assertions.assertEquals("Home", driver.getTitle());
+	}
+
+	@Test
+	public void loggedOutUsersCannotAccessHomePage() throws InterruptedException{
+		driver.get("http://localhost:" + this.port + "/signup");
+		signupPage.registerUser("maged", "ahmed", "maged", "secret");
+		Thread.sleep(1000);
+		loginPage.loginUser("maged", "secret");
+		Thread.sleep(1000);
+		homePage.logout();
+		driver.get("http://localhost:" + this.port + "/");
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	public void signup() {
+		driver.get("http://localhost:" + this.port + "/signup");
+		signupPage.registerUser("maged", "ahmed", "maged", "secret");
+	}
+
+	public void login() {
+		loginPage.loginUser("maged", "secret");
+	}
+
+	@Test
+	public void userCanStoreNote() throws InterruptedException{
+		this.signup();
+		Thread.sleep(500);
+		this.login();
+		Thread.sleep(500);
+		homePage.openNotesTab();
+		Thread.sleep(500);
+		homePage.openNoteModal();
+		Thread.sleep(500);
+		homePage.saveNote("note", "something to say");
+		Thread.sleep(500);
+		driver.get("http://localhost:" + this.port + "/");
+		homePage.openNotesTab();
+		Thread.sleep(500);
+		WebElement savedNote = driver.findElement(By.cssSelector("th.note-title-row"));
+		Assertions.assertEquals("note", savedNote.getText());
+	}
+
+	@Test
+	public void userCanEditHisNotes() throws InterruptedException {
+		this.userCanStoreNote();
+		Thread.sleep(500);
+		WebElement editButton = driver.findElement(By.cssSelector("button.btn-success"));
+		editButton.click();
+		Thread.sleep(500);
+		homePage.editNote("new title", "new Description");
+		Thread.sleep(500);
+		driver.get("http://localhost:" + this.port + "/");
+		homePage.openNotesTab();
+		Thread.sleep(500);
+		WebElement savedNote = driver.findElement(By.cssSelector("th.note-title-row"));
+		Assertions.assertEquals("new title", savedNote.getText());
+	}
+
+	@Test
+	public void userCanDeleteHisNote() throws InterruptedException {
+		this.userCanStoreNote();
+		Thread.sleep(500);
+		WebElement editButton = driver.findElement(By.cssSelector("a.btn-danger"));
+		driver.get("http://localhost:" + this.port + "/");
+		homePage.openNotesTab();
+		WebElement savedNote = driver.findElement(By.cssSelector("th.note-title-row"));
+		Assertions.assertEquals("", savedNote.getText());
+	}
+
 }
