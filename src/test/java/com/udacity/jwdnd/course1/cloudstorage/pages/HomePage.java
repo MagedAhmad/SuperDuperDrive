@@ -18,14 +18,32 @@ public class HomePage {
     @FindBy(id = "note-description")
     private WebElement noteDescription;
 
+    @FindBy(id = "credential-username")
+    private WebElement credentialsUsername;
+
+    @FindBy(id = "credential-url")
+    private WebElement credentialsUrl;
+
+    @FindBy(id = "credential-password")
+    private WebElement credentialsPassword;
+
     @FindBy(id = "saveNoteButton")
     private WebElement noteSubmit;
+
+    @FindBy(id = "saveCredentialButton")
+    private WebElement credentialSubmit;
 
     @FindBy(id = "nav-notes-tab")
     private WebElement notesTab;
 
+    @FindBy(id = "nav-credentials-tab")
+    private WebElement credentialsTab;
+
     @FindBy(id = "show-note-modal")
     private WebElement noteModal;
+
+    @FindBy(id = "show-credentials-modal")
+    private WebElement credentialsModal;
 
     public HomePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
@@ -38,16 +56,29 @@ public class HomePage {
     public void saveNote(String title, String description) throws InterruptedException {
         noteTitle.sendKeys(title);
         noteDescription.sendKeys(description);
-        Thread.sleep(500);
         noteSubmit.click();
+    }
+
+    public void saveCredential(String username, String url, String password) throws InterruptedException {
+        credentialsUsername.sendKeys(username);
+        credentialsUrl.sendKeys(url);
+        credentialsPassword.sendKeys(password);
+        credentialSubmit.click();
     }
 
     public void openNotesTab() {
         notesTab.click();
     }
 
+    public void openCredentialsTab() {
+        credentialsTab.click();
+    }
+
     public void openNoteModal() {
         noteModal.click();
+    }
+    public void openCredentialsModal() {
+        credentialsModal.click();
     }
 
     public void editNote(String title, String description) throws InterruptedException{
@@ -55,7 +86,16 @@ public class HomePage {
         noteTitle.sendKeys(title);
         noteDescription.clear();
         noteDescription.sendKeys(description);
-        Thread.sleep(500);
 		noteSubmit.click();
+    }
+
+    public void editCredential(String username, String url, String password) throws InterruptedException{
+        credentialsUsername.clear();
+        credentialsUsername.sendKeys(username);
+        credentialsUrl.clear();
+        credentialsUrl.sendKeys(url);
+        credentialsPassword.clear();
+        credentialsPassword.sendKeys(password);
+		credentialSubmit.click();
     }
 }

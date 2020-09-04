@@ -18,10 +18,6 @@ public class CredentialService {
     @Autowired
     private EncryptionService encryptionService;
 
-    public List<Credential> getAll(Integer userid) {
-        return credentialMapper.findByUserId(userid);
-    }
-
     public List<Credential> getAll(int userid) throws Exception {
         List<Credential> credentials = credentialMapper.findByUserId(userid);
         if (credentials == null) {

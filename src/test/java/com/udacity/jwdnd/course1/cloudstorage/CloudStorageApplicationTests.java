@@ -138,4 +138,39 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals("", savedNote.getText());
 	}
 
+	@Test
+	public void userCanStoreCredentials() throws InterruptedException{
+		this.signup();
+		Thread.sleep(500);
+		this.login();
+		Thread.sleep(500);
+		homePage.openCredentialsTab();
+		Thread.sleep(500);
+		homePage.openCredentialsModal();
+		Thread.sleep(500);
+		homePage.saveCredential("magedraslan", "http://google.com", "secret");
+		Thread.sleep(500);
+		driver.get("http://localhost:" + this.port + "/");
+		homePage.openCredentialsTab();
+		Thread.sleep(500);
+		WebElement savedCredential = driver.findElement(By.cssSelector("td.credential-username-row"));
+		Assertions.assertEquals("magedraslan", savedCredential.getText());
+	}
+
+	@Test
+	public void userCanEditCredentials() throws InterruptedException {
+		this.userCanStoreCredentials();
+		Thread.sleep(500);
+		WebElement editButton = driver.findElement(By.cssSelector("button.btn-success"));
+		editButton.click();
+		Thread.sleep(500);
+		homePage.editCredential("new username","http://www.new.com" , "new password");
+		Thread.sleep(500);
+		driver.get("http://localhost:" + this.port + "/");
+		homePage.openCredentialsTab();
+		Thread.sleep(500);
+		WebElement savedCredential = driver.findElement(By.cssSelector("td.credential-username-row"));
+		Assertions.assertEquals("new username", savedCredential.getText());
+	}
+
 }

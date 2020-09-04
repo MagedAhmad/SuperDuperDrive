@@ -26,7 +26,7 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String showHome(Model model, Authentication authentication) {
+    public String showHome(Model model, Authentication authentication) throws Exception {
         Integer userId = userMapper.getUser(authentication.getName()).getUserid();
         model.addAttribute("notes", noteService.getNotes(userId));
         model.addAttribute("files", fileService.getFiles(userId));
