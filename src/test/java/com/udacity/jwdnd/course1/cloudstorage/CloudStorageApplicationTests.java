@@ -173,4 +173,14 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals("new username", savedCredential.getText());
 	}
 
+	@Test
+	public void userCanDeleteHisCredential() throws InterruptedException {
+		this.userCanStoreCredentials();
+		Thread.sleep(500);
+		WebElement editButton = driver.findElement(By.cssSelector("a.btn-danger"));
+		driver.get("http://localhost:" + this.port + "/");
+		homePage.openCredentialsTab();
+		WebElement savedCredential = driver.findElement(By.cssSelector("td.credential-username-row"));
+		Assertions.assertEquals("", savedCredential.getText());
+	}
 }

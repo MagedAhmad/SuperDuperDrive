@@ -23,7 +23,7 @@ public class CredentialService {
         if (credentials == null) {
           throw new Exception();
         }
-        return credentials.stream().map(this::decryptPassword).collect(Collectors.toList());
+        return credentials;
     }
 
     private Credential decryptPassword(Credential credential) {
