@@ -24,12 +24,6 @@ public class CredentialService {
         return credentials;
     }
 
-    private Credential decryptPassword(Credential credential) {
-        credential.setPassword(encryptionService.decryptValue(credential.getPassword(),
-                                                              credential.getKey()));
-        return credential;
-    }
-
     public void add(Credential credential, int userid) {
         credentialMapper.insert(encryptPassword(credential), userid);
     }
@@ -41,6 +35,7 @@ public class CredentialService {
         String encodedKey = Base64.getEncoder().encodeToString(key);
         credential.setKey(encodedKey);
         credential.setPassword(encryptionService.encryptValue(credential.getPassword(), encodedKey));
+
         return credential;
     }
 
