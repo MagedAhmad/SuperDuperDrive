@@ -43,10 +43,16 @@ public class FileController {
     }
 
     @GetMapping("/file/delete")
-    public String delete(@RequestParam("id") int fileid) {
+    public String delete(@RequestParam("id") int fileid, Authentication authentication) {
         if(fileid < 1) {
             return "redirect:/result?error";
         }
+
+        User user = userMapper.getUser(authentication.getName());
+        if(user.getUserid() != fileService.findByid(fileid).getUserid()) {
+            return "redirect:/result?error";
+        }
+
         fileService.delete(fileid);
 
         return "redirect:/result?success";
