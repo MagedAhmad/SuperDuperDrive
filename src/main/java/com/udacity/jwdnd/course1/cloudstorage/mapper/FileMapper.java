@@ -11,6 +11,12 @@ import java.util.List;
 
 @Mapper
 public interface FileMapper {
+    @Select("SELECT * FROM FILES WHERE fileid = #{fileid}")
+    public File findByid(int fileid);
+
+    @Select("SELECT * FROM FILES WHERE filename = #{filename} AND userid = #{userid}")
+    public File findByname(String filename, int userid);
+
     @Select("SELECT * FROM FILES WHERE userid = #{userid}")
     public List<File> findByUserId(int userid);
 

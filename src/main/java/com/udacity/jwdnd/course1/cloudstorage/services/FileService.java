@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -25,4 +26,10 @@ public class FileService {
         fileMapper.delete(fileid);
     }
 
+    public String getFileData(int fileid) {
+        File file = fileMapper.findByid(fileid);
+        String base64 = Base64.getEncoder().encodeToString(file.getFiledata());
+        String dataURL = "data:" + file.getContenttype() + ";base64," + base64;
+        return dataURL;
+    }
 }

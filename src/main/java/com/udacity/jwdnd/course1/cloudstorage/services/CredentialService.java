@@ -20,9 +20,7 @@ public class CredentialService {
 
     public List<Credential> getAll(int userid) throws Exception {
         List<Credential> credentials = credentialMapper.findByUserId(userid);
-        if (credentials == null) {
-          throw new Exception();
-        }
+
         return credentials;
     }
 

@@ -24,9 +24,6 @@ public class NoteController {
     public String saveNote(Authentication authentication, Note note) {
         User user = userMapper.getUser(authentication.getName());
         if(note.getNoteid() != null) {
-//            if(user.getUserid() != note.getUserid()){
-//                return "redirect:/result?error";
-//            }
             noteService.editNote(note);
         }else {
             note.setUserid(user.getUserid());

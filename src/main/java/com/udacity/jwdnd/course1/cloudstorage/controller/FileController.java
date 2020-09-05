@@ -5,8 +5,10 @@ import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,15 +18,12 @@ import java.io.IOException;
 
 @Controller
 public class FileController {
+    @Autowired
     private FileService fileService;
+    @Autowired
     private FileMapper fileMapper;
+    @Autowired
     private UserMapper userMapper;
-
-    public FileController(FileService fileService, FileMapper fileMapper, UserMapper userMapper) {
-        this.fileService = fileService;
-        this.fileMapper = fileMapper;
-        this.userMapper = userMapper;
-    }
 
     @PostMapping("/file")
     public String addFile(Authentication authentication, MultipartFile fileUpload) throws IOException {
@@ -32,6 +31,12 @@ public class FileController {
             return "redirect:/result?error";
         }
         User user = userMapper.getUser(authentication.getName());
+
+//        check if filename already exists
+        File oldFile = fileMapper.findByname(fileUpload.getOriginalFilename(), user.getUserid());
+        if(oldFile != null) {
+            return "redirect:/result?error";
+        }
         fileService.addFile(fileUpload, user.getUserid());
 
         return "redirect:/result?success";
@@ -46,4 +51,5 @@ public class FileController {
 
         return "redirect:/result?success";
     }
+
 }
