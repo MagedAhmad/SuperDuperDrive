@@ -19,9 +19,7 @@ public class CredentialsTest {
 	private int port;
 
 	private WebDriver driver;
-
 	private LoginPage loginPage;
-	private SignupPage signupPage;
 	private HomePage homePage;
 
 	@BeforeAll
@@ -32,9 +30,10 @@ public class CredentialsTest {
 	@BeforeEach
 	public void beforeEach() {
 		this.driver = new ChromeDriver();
-		signupPage = new SignupPage(driver);
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
+        driver.get("http://localhost:" + this.port + "/login");
+		this.login();
 	}
 
 	@AfterEach
@@ -44,21 +43,13 @@ public class CredentialsTest {
 		}
 	}
 
-	public void signup() {
-		driver.get("http://localhost:" + this.port + "/signup");
-		signupPage.registerUser("maged", "ahmed", "maged", "secret");
-	}
-
 	public void login() {
 		loginPage.loginUser("maged", "secret");
 	}
 
 	@Test
     @Order(1)
-	public void userCanStoreCredentials() throws InterruptedException{
-		this.signup();
-		Thread.sleep(500);
-		this.login();
+	public void userCanStoreAndUpdateCredentials() throws InterruptedException{
 		Thread.sleep(500);
 		homePage.openCredentialsTab();
 		Thread.sleep(500);
@@ -72,9 +63,9 @@ public class CredentialsTest {
 		WebElement savedCredential = driver.findElement(By.cssSelector("td.credential-username-row"));
 		Assertions.assertEquals("magedraslan", savedCredential.getText());
 		Thread.sleep(500);
-		WebElement editButton = driver.findElement(By.cssSelector("button.btn-success"));
+		WebElement editButton = driver.findElement(By.cssSelector("button.edit-cred"));
 		editButton.click();
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		homePage.editCredential("new username","http://www.new.com" , "new password");
 		Thread.sleep(500);
 		driver.get("http://localhost:" + this.port + "/");
@@ -87,8 +78,6 @@ public class CredentialsTest {
 	@Test
     @Order(2)
 	public void userCanDeleteHisCredential() throws InterruptedException {
-	    driver.get("http://localhost:" + this.port + "/login");
-		this.login();
 		Thread.sleep(500);
         homePage.openCredentialsTab();
         Thread.sleep(500);
